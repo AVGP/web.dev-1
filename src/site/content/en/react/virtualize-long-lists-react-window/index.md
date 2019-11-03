@@ -235,7 +235,8 @@ class App extends Component {
     super(props);
     this.state = {
       items: [], // instantiate initial list here
-      moreItemsLoading: false
+      moreItemsLoading: false,
+      hasNextPage: true
     };
 
     this.loadMore = this.loadMore.bind(this);
@@ -246,10 +247,15 @@ class App extends Component {
   }
 
   render() {
-    const { items, moreItemsLoading } = this.state;
+    const { items, moreItemsLoading, hasNextPage } = this.state;
 
     return (
-      <ListComponent items={items} moreItemsLoading={moreItemsLoading} loadMore={this.loadMore}/>
+      <ListComponent
+        items={items}
+        moreItemsLoading={moreItemsLoading}
+        loadMore={this.loadMore}
+        hasNextPage={hasNextPage}
+      />
     );
   }
 }
@@ -269,22 +275,24 @@ import React from 'react';
 import { FixedSizeList } from 'react-window';
 import InfiniteLoader from "react-window-infinite-loader";
 
-const ListComponent = ({ items, moreItemsLoading, loadMore }) => {
+const ListComponent = ({ items, moreItemsLoading, loadMore, hasNextPage }) => {
   const Row = ({ index, style }) => (
      {/* define the row component using items[index] */}
   );
 
+  const itemCount = hasNextPage ? items.length + 1 : items.length;
+
   return (
     <InfiniteLoader
-      isItemLoaded={index => index < items.length - 1}
-      itemCount={items.length}
+      isItemLoaded={index => index < items.length}
+      itemCount={itemCount}
       loadMoreItems={loadMore}
     >
       {({ onItemsRendered, ref }) => (
         <FixedSizeList
           height={500}
           width={500}
-          itemCount={items.length}
+          itemCount={itemCount}
           itemSize={120}
           onItemsRendered={onItemsRendered}
           ref={ref}
@@ -351,7 +359,7 @@ const Row = ({ index, style }) => {
 
 Since items in a virtualized list only change when the user scrolls, blank
 space can briefly flash as newer entries are about to be displayed. You can
-try quckly scrolling any of the previous examples in this guide to notice
+try quickly scrolling any of the previous examples in this guide to notice
 this. 
 
 To improve the user experience of virtualized lists, `react-window` allows

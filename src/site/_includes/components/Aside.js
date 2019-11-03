@@ -14,39 +14,21 @@
  * limitations under the License.
  */
 
-const md = require('markdown-it')();
+const md = require("markdown-it")();
+const capitalize = require("../../_filters/capitalize");
+const titleCase = require("../../_filters/title-case");
 
-/**
- * Capitalize the first letter of a word.
- * @param {string} str
- * @return {string} A capitalized copy of the string.
- */
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/**
- * Title case a string of dash separated words
- * @param {string} str
- * @return {string} A title cased copy of the string.
- */
-function titleCase(str) {
-  return str.split('-').map((part) => {
-    return capitalize(part);
-  }).join(' ');
-}
-
-module.exports = (content, type='note') => {
+module.exports = (content, type = "note") => {
   let prefix;
   switch (type) {
-    case 'note':
+    case "note":
       content = md.render(content);
       break;
 
-    case 'caution':
-    case 'warning':
-    case 'success':
-    case 'objective':
+    case "caution":
+    case "warning":
+    case "success":
+    case "objective":
       prefix = capitalize(type);
       // Create a <strong> with the type of aside and render it inline with
       // the generated markdown.
@@ -54,18 +36,18 @@ module.exports = (content, type='note') => {
       content = md.render(content);
       break;
 
-    case 'codelab':
+    case "codelab":
       content = `**Try it!** ${content}`;
       content = md.render(content);
       break;
 
-    case 'key-term':
+    case "key-term":
       prefix = titleCase(type);
       content = `**${prefix}:** ${content}`;
       content = md.render(content);
       break;
 
-    case 'gotchas':
+    case "gotchas":
       prefix = capitalize(type);
       // Note the gotchas prefix has a ! instead of a :
       // And the <strong> tag should appear outside of the <p> tag
